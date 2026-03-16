@@ -1,53 +1,53 @@
-CREATE TABLE itens_bases (
-    id SERIAL PRIMARY KEY,
-    nome TEXT,
-    raridade TEXT,
-    id_jogo_origem INT
+CREATE TABLE item_base (
+    id INT NOT NULL PRIMARY KEY,
+    nome VARCHAR(255),
+    raridade VARCHAR(50),
+    id_jogo_origem INT NOT NULL
 );
 
-CREATE TABLE inventarios_usuarios (
-    id_serial SERIAL PRIMARY KEY,
-    id_item_base INT,
-    id_usuario_dono INT
+CREATE TABLE inventario_usuario (
+    id INT NOT NULL PRIMARY KEY,
+    id_item_base INT NOT NULL,
+    id_usuario_dono INT NOT NULL
 );
 
-CREATE TABLE mercados_anuncios (
-    id SERIAL PRIMARY KEY,
-    id_serial_item INT,
-    preco_venda DECIMAL,
-    id_vendedor INT
+CREATE TABLE mercado_anuncio (
+    id INT NOT NULL PRIMARY KEY,
+    id_serial_item INT NOT NULL,
+    preco_venda DECIMAL(10, 2),
+    id_vendedor INT NOT NULL
 );
 
-CREATE TABLE mercados_historicos (
-    id SERIAL PRIMARY KEY,
-    id_item_base INT,
-    valor_venda DECIMAL,
+CREATE TABLE mercado_historico (
+    id INT NOT NULL PRIMARY KEY,
+    id_item_base INT NOT NULL,
+    valor_venda DECIMAL(10, 2),
     data_venda TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE ofertas_trocas (
-    id SERIAL PRIMARY KEY,
-    id_remetente INT,
-    id_destinatario INT,
-    status TEXT
+CREATE TABLE oferta_troca (
+    id INT NOT NULL PRIMARY KEY,
+    id_remetente INT NOT NULL,
+    id_destinatario INT NOT NULL,
+    status VARCHAR(50)
 );
 
-CREATE TABLE itens_ofertas_trocas (
-    id_oferta INT,
-    id_serial_item INT,
+CREATE TABLE item_oferta_troca (
+    id_oferta INT NOT NULL,
+    id_serial_item INT NOT NULL,
     PRIMARY KEY (id_oferta, id_serial_item)
 );
 
-CREATE TABLE insignias (
-    id SERIAL PRIMARY KEY,
-    nome TEXT,
-    xp_recompensa INT,
-    id_jogo INT
+CREATE TABLE insignia (
+    id INT NOT NULL PRIMARY KEY,
+    nome VARCHAR(255),
+    xp_recompensa INT NOT NULL,
+    id_jogo INT NOT NULL
 );
 
-CREATE TABLE insignias_usuarios (
-    id_usuario INT,
-    id_insignia INT,
-    nivel INT,
+CREATE TABLE insignia_usuario (
+    id_usuario INT NOT NULL,
+    id_insignia INT NOT NULL,
+    nivel INT NOT NULL,
     PRIMARY KEY (id_usuario, id_insignia)
 );
