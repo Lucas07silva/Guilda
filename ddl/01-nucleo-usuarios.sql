@@ -10,7 +10,7 @@ DROP TABLE IF EXISTS usuario CASCADE;
 
 -- tabela pai principal
 create table usuario (
-    id serial primary key,
+    id int not null primary key,
     email varchar(150) not null unique,
     senha_hash varchar(255) not null,
     data_criacao timestamp not null default current_timestamp,
@@ -29,7 +29,7 @@ create table perfil (
 
 -- tabela de amizade
 create table amizade (
-    id serial primary key,
+    id int not null primary key,
     id_usuario_a int not null,
     id_usuario_b int not null,
     data_inicio timestamp not null default current_timestamp,
@@ -41,7 +41,7 @@ create table amizade (
 
 -- tabela de lista de bloqueio
 create table lista_bloqueio (
-    id serial primary key,
+    id int not null primary key,
     id_usuario int not null,
     id_usuario_bloqueado int not null,
     data_bloqueio timestamp default current_timestamp,
@@ -51,7 +51,7 @@ create table lista_bloqueio (
 
 -- tabela de grupo
 create table grupo (
-    id serial primary key,
+    id int not null primary key,
     nome varchar(100) not null,
     descricao varchar(255),
     id_criador int not null,
@@ -61,7 +61,7 @@ create table grupo (
 
 -- tabela de membro do grupo
 create table membro_grupo (
-    id serial primary key,
+    id int not null primary key,
     id_grupo int not null,
     id_usuario int not null,
     cargo varchar(50) not null default 'membro',
@@ -72,7 +72,7 @@ create table membro_grupo (
 
 -- tabela de notificacao
 create table notificacao (
-    id serial primary key,
+    id int not null primary key,
     id_usuario int not null,
     mensagem varchar(255) not null,
     lida_bool boolean default false,
