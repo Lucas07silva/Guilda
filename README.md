@@ -37,6 +37,10 @@ Bash
     │   └── 06-comunidade-suporte.sql
     ├── /docs
     │   └── justificativa-dominio.md
+    ├── /dql
+    │   ├── consulta_de_conjuntos.sql
+    │   ├── consulta_relacional.sql
+    │   └── consulta_de_agrupamento.sql
     └── README.md
 
 🛠️ Padrões de Nomenclatura (Naming Standards)
