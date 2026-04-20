@@ -117,21 +117,69 @@ INSERT INTO usuario (id, username, email) VALUES
 
 -- JOGOS
 INSERT INTO jogo (id, nome, desenvolvedora) VALUES
-(1, 'Elden Ring', 'FromSoftware'),
-(2, 'Cyberpunk 2077', 'CD Projekt Red');
+(1, 'God of War', 'Santa Monica Studio'),
+(2, 'Halo Infinite', '343 Industries'),
+(3, 'Zelda BOTW', 'Nintendo'),
+(4, 'FIFA 24', 'EA Sports'),
+(5, 'Far Cry 6', 'Ubisoft'),
+(6, 'GTA V', 'Rockstar Games'),
+(7, 'Diablo IV', 'Blizzard Entertainment'),
+(8, 'Final Fantasy XVI', 'Square Enix'),
+(9, 'Resident Evil 4', 'Capcom'),
+(10, 'Elden Ring', 'FromSoftware'),
+(11, 'Sonic Frontiers', 'Sega'),
+(12, 'Hogwarts Legacy', 'Avalanche Software'),
+(13, 'Starfield', 'Bethesda Game Studios'),
+(14, 'Stellaris', 'Paradox Interactive'),
+(15, 'Cyberpunk 2077', 'CD Projekt Red'),
+(16, 'Metal Gear Rising', 'PlatinumGames'),
+(17, 'Portal 2', 'Valve'),
+(18, 'Fortnite', 'Epic Games'),
+(19, 'Dark Souls III', 'FromSoftware'),
+(20, 'A Plague Tale', 'Asobo Studio'),
+(21, 'Cult of the Lamb', 'Massive Monster'),
+(22, 'Overcooked 2', 'Team17'),
+(23, 'Dredge', 'Black Salt Games'),
+(24, 'Stray', 'BlueTwelve Studio'),
+(25, 'Satisfactory', 'Coffee Stain Studios'),
+(26, 'Metro Exodus', '4A Games'),
+(27, 'Control', 'Remedy Entertainment'),
+(28, 'Vampyr', 'Dontnod Entertainment'),
+(29, 'Dying Light 2', 'Techland'),
+(30, 'Sniper Elite 5', 'Rebellion Developments');
 
 -- ITEM BASE
 INSERT INTO item_base (id, nome, raridade, id_jogo_origem) VALUES
-(1, 'Rivers of Blood', 'Legendary', 1), (2, 'Moonveil Katana', 'Epic', 1), (3, 'Blasphemous Blade', 'Legendary', 1),
-(4, 'Malenia Armor Set', 'Legendary', 1), (5, 'Radagon Icon', 'Rare', 1), (6, 'Golden Seed', 'Uncommon', 1),
-(7, 'Mimic Tear Ashes', 'Legendary', 1), (8, 'Dark Moon Greatsword', 'Legendary', 1), (9, 'Erdtree Favor', 'Rare', 1),
-(10, 'Starscourge Sword', 'Legendary', 1), (11, 'Buckler', 'Common', 1), (12, 'Fingerprint Shield', 'Epic', 1),
-(13, 'Comet Azur', 'Epic', 1), (14, 'White Mask', 'Rare', 1), (15, 'Great-Jar Arsenal', 'Epic', 1),
-(16, 'Mantis Blades', 'Epic', 2), (17, 'Monowire', 'Epic', 2), (18, 'Silverhand Jacket', 'Legendary', 2),
-(19, 'Malorian Arms 3516', 'Legendary', 2), (20, 'Sandevistan Mk.4', 'Legendary', 2), (21, 'Kiroshi Optics', 'Common', 2),
-(22, 'Arasaka Neural Link', 'Rare', 2), (23, 'Gorilla Arms', 'Epic', 2), (24, 'Projectile Launcher', 'Epic', 2),
-(25, 'Satori Katana', 'Legendary', 2), (26, 'Lizzie Pistol', 'Rare', 2), (27, 'Widow Maker', 'Epic', 2),
-(28, 'Skippy AI Gun', 'Legendary', 2), (29, 'Netwatch Driver', 'Rare', 2), (30, 'Trauma Team Kit', 'Uncommon', 2);
+(1, 'Lâminas do Caos', 'Lendário', 1),          -- God of War
+(2, 'Rifle de Assalto MA40', 'Comum', 2),      -- Halo Infinite
+(3, 'Master Sword', 'Épico', 3),               -- Zelda BOTW
+(4, 'Cartão de Jogador Ouro', 'Raro', 4),       -- FIFA 24
+(5, 'Machete de Guerrilha', 'Comum', 5),       -- Far Cry 6
+(6, 'Bastão de Beisebol', 'Comum', 6),          -- GTA V
+(7, 'Elmo de Shako', 'Lendário', 7),           -- Diablo IV
+(8, 'Invencível (Espada)', 'Épico', 8),        -- Final Fantasy XVI
+(9, 'Erva Verde', 'Comum', 9),                 -- Resident Evil 4
+(10, 'Lágrima Larvar', 'Raro', 10),            -- Elden Ring
+(11, 'Esmeralda do Caos', 'Lendário', 11),     -- Sonic Frontiers
+(12, 'Varinha de Videira', 'Raro', 12),        -- Hogwarts Legacy
+(13, 'Fragmento de Artefato', 'Épico', 13),    -- Starfield
+(14, 'Matéria Escura', 'Raro', 14),            -- Stellaris
+(15, 'Lâminas Mantis', 'Épico', 15),           -- Cyberpunk 2077
+(16, 'Espada de Alta Frequência', 'Épico', 16),-- Metal Gear Rising
+(17, 'Gerador de Portais', 'Lendário', 17),    -- Portal 2
+(18, 'Poção de Escudo', 'Comum', 18),          -- Fortnite
+(19, 'Alma de Cinzas', 'Lendário', 19),        -- Dark Souls III
+(20, 'Estilingue de Amicia', 'Comum', 20),     -- A Plague Tale
+(21, 'Velo de Ouro', 'Épico', 21),             -- Cult of the Lamb
+(22, 'Extintor de Incêndio', 'Comum', 22),     -- Overcooked 2
+(23, 'Relíquia Abissal', 'Raro', 23),          -- Dredge
+(24, 'Mochila de Drone', 'Comum', 24),         -- Stray
+(25, 'Célula de Energia', 'Raro', 25),         -- Satisfactory
+(26, 'Máscara de Gás', 'Comum', 26),           -- Metro Exodus
+(27, 'Objeto de Poder', 'Épico', 27),          -- Control
+(28, 'Soro Vampírico', 'Raro', 28),            -- Vampyr
+(29, 'Gancho de Escalada', 'Raro', 29),        -- Dying Light 2
+(30, 'Munição Perfurante', 'Comum', 30);       -- Sniper Elite 5
 
 -- INVENTARIO USUARIO
 INSERT INTO inventario_usuario (id, id_item_base, id_usuario_dono) VALUES
@@ -149,8 +197,36 @@ INSERT INTO mercado_anuncio (id, id_inventario_item, preco_venda, id_vendedor) V
 
 -- INSIGNIA
 INSERT INTO insignia (id, nome, xp_recompensa, id_jogo) VALUES
-(1, 'Elden Lord', 1000, 1), (2, 'Shards Bearer', 500, 1),
-(3, 'Night City Legend', 1000, 2), (4, 'Cyberpsycho Hunter', 450, 2);
+(1, 'Matador de Deuses', 500, 1),           -- God of War
+(2, 'Spartan Lendário', 450, 2),           -- Halo Infinite
+(3, 'Herói de Hyrule', 600, 3),            -- Zelda BOTW
+(4, 'Artilheiro de Ouro', 300, 4),         -- FIFA 24
+(5, 'Libertador de Yara', 350, 5),         -- Far Cry 6
+(6, 'Magnata do Crime', 400, 6),           -- GTA V
+(7, 'Andarilho do Inferno', 550, 7),       -- Diablo IV
+(8, 'Portador do Cristal', 500, 8),        -- Final Fantasy XVI
+(9, 'Mestre do Survival', 450, 9),         -- Resident Evil 4
+(10, 'Lorde Prístino', 700, 10),           -- Elden Ring
+(11, 'Velocidade Supersônica', 300, 11),   -- Sonic Frontiers
+(12, 'Bruxo de Hogwarts', 400, 12),        -- Hogwarts Legacy
+(13, 'Explorador das Estrelas', 500, 13),  -- Starfield
+(14, 'Imperador Galáctico', 350, 14),      -- Stellaris
+(15, 'Lenda de Night City', 450, 15),      -- Cyberpunk 2077
+(16, 'Ciborgue de Elite', 300, 16),        -- Metal Gear Rising
+(17, 'Mestre dos Portais', 250, 17),       -- Portal 2
+(18, 'Mestre do Drop', 200, 18),           -- Fortnite
+(19, 'Alma das Cinzas', 600, 19),          -- Dark Souls III
+(20, 'Sobrevivente da Peste', 350, 20),    -- A Plague Tale
+(21, 'Líder do Culto', 300, 21),           -- Cult of the Lamb
+(22, 'Chef de Estrela Michelin', 200, 22), -- Overcooked 2
+(23, 'Pescador do Abismo', 250, 23),       -- Dredge
+(24, 'Miau-ventureiro', 250, 24),          -- Stray
+(25, 'Eficiência Industrial', 300, 25),    -- Satisfactory
+(26, 'Rastreador do Metro', 350, 26),      -- Metro Exodus
+(27, 'Diretor do FBC', 350, 27),           -- Control
+(28, 'Doutor das Sombras', 300, 28),       -- Vampyr
+(29, 'Mestre do Parkour', 400, 29),        -- Dying Light 2
+(30, 'Atirador de Elite', 350, 30);        -- Sniper Elite 5
 
 -- INSIGNIA USUARIO
 INSERT INTO insignia_usuario (id_usuario, id_insignia, nivel) VALUES
