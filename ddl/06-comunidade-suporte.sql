@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS mensagem_ticket;
-DROP TABLE IF EXISTS ticket_suporte;
-DROP TABLE IF EXISTS avaliacao;
-DROP TABLE IF EXISTS oficina_mod;
-DROP TABLE IF EXISTS banimento;
+DROP TABLE IF EXISTS mensagem_ticket cascade;
+DROP TABLE IF EXISTS ticket_suporte cascade;
+DROP TABLE IF EXISTS avaliacao cascade;
+DROP TABLE IF EXISTS oficina_mod cascade;
+DROP TABLE IF EXISTS banimento cascade;
 
 
 CREATE TABLE banimento (
