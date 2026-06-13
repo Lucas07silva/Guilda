@@ -167,3 +167,93 @@ INSERT INTO reembolso (id, id_transacao, motivo_reembolso, status_aprovacao) VAL
 (29, 29, 'Salves corrompidos frequentemente', 'Aprovado'), 
 (30, 30, 'Jogo não atendeu as minhas expectativas', 'Aprovado');
 
+-- TRIGGER VerificarSaldoCompra
+CREATE OR REPLACE FUNCTION fn_verificar_saldo()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_saldo DECIMAL(10,2);
+BEGIN
+    -- busca o saldo do usuário na tabela 'usuario'
+    SELECT saldo INTO v_saldo 
+    FROM usuario 
+    WHERE id = NEW.id_usuario;
+
+    -- bloqueia a transação se não houver saldo suficiente
+    IF v_saldo < NEW.valor_total THEN
+        RAISE EXCEPTION 'Compra negada Saldo insuficiente. Saldo atual: R$ %, Valor necessário: R$ %', v_saldo, NEW.valor_total;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER VerificarSaldoCompra
+BEFORE INSERT ON transacao
+FOR EACH ROW
+EXECUTE FUNCTION fn_verificar_saldo();
+
+-- PROCEDURE ComprarJogo
+CREATE OR REPLACE PROCEDURE ComprarJogo(
+    p_id_usuario INT,
+    p_id_jogo INT,
+    p_id_metodo INT,
+    p_codigo_cupom VARCHAR(20) DEFAULT NULL
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_preco_base DECIMAL(10,2);
+    v_desconto_pct INT := 0;
+    v_valor_final DECIMAL(10,2);
+    v_id_transacao INT;
+    v_id_item_transacao INT;
+BEGIN
+    -- obter o preço regional do jogo moeda ID 1 = BRL
+    SELECT valor_localizado INTO v_preco_base
+    FROM preco_regional
+    WHERE id_jogo = p_id_jogo AND id_moeda = 1; 
+
+    IF v_preco_base IS NULL THEN
+        RAISE EXCEPTION 'Preço regional não configurado para o jogo % na moeda solicitada.', p_id_jogo;
+    END IF;
+
+    -- validar o cupom (tem que ta passando pelo parametro)
+    IF p_codigo_cupom IS NOT NULL THEN
+        SELECT desconto_percentual INTO v_desconto_pct
+        FROM cupom
+        WHERE codigo_cupom = p_codigo_cupom AND id_usuario_dono = p_id_usuario;
+
+        IF v_desconto_pct IS NULL THEN
+            RAISE NOTICE 'Cupom inválido.';
+            v_desconto_pct := 0;
+        END IF;
+    END IF;
+
+    -- calcular valor final 
+    v_valor_final := v_preco_base - (v_preco_base * (v_desconto_pct / 100.0));
+
+    -- gerar IDs para as transações
+    SELECT COALESCE(MAX(id), 0) + 1 INTO v_id_transacao FROM transacao;
+    SELECT COALESCE(MAX(id), 0) + 1 INTO v_id_item_transacao FROM item_transacao;
+
+    -- registrar transação na tabela (a Trigger entra em ação aqui para checar saldo)
+    INSERT INTO transacao (id, id_usuario, id_metodo, valor_total, status_transacao)
+    VALUES (v_id_transacao, p_id_usuario, p_id_metodo, v_valor_final, 'Aprovada');
+
+    -- gravar o item vendido
+    INSERT INTO item_transacao (id, id_transacao, id_jogo, preco_vendido)
+    VALUES (v_id_item_transacao, v_id_transacao, p_id_jogo, v_valor_final);
+
+    -- descontar o valor do saldo na tabela 'usuario'
+    UPDATE usuario 
+    SET saldo = saldo - v_valor_final 
+    WHERE id = p_id_usuario;
+
+    -- limpar da lista de desejos caso exista
+    DELETE FROM lista_desejo 
+    WHERE id_usuario = p_id_usuario AND id_jogo = p_id_jogo;
+
+    RAISE NOTICE 'compra concluida Transação ID: %, Valor cobrado: R$ %', v_id_transacao, v_valor_final;
+END;
+$$;
+
