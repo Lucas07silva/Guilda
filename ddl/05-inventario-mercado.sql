@@ -157,3 +157,116 @@ INSERT INTO insignia_usuario (id_usuario, id_insignia, nivel) VALUES
 (1,1,5), (2,3,1), (3,1,2), (4,3,2), (5,1,1), (6,4,3), (7,2,5), (8,3,4), (9,2,2), (10,4,5),
 (11,1,1), (12,3,1), (13,1,2), (14,4,2), (15,2,1), (16,3,3), (17,1,4), (18,4,5), (19,2,3), (20,3,1),
 (21,1,1), (22,4,2), (23,2,1), (24,3,2), (25,1,3), (26,4,4), (27,2,5), (28,3,1), (29,1,2), (30,4,3);
+
+
+CREATE OR REPLACE FUNCTION VerificarRaridadeItem(p_id_item_base INT)
+RETURNS VARCHAR(50) AS $$
+DECLARE
+    v_raridade VARCHAR(50);
+BEGIN
+    SELECT COALESCE(raridade, 'Common') INTO v_raridade
+    FROM item_base
+    WHERE id = p_id_item_base;
+    
+    RETURN v_raridade;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION CalcularTaxaMercado(p_preco_venda DECIMAL(10, 2), p_id_vendedor INT, p_id_item_base INT)
+RETURNS DECIMAL(10, 2) AS $$
+DECLARE
+    v_taxa_percentual DECIMAL(4, 3) := 0.050; -- Taxa padrão de 5%
+    v_tempo_jogado INT;
+    v_id_jogo INT;
+BEGIN
+    -- Identifica o jogo de origem do item
+    SELECT id_jogo_origem INTO v_id_jogo FROM item_base WHERE id = p_id_item_base;
+
+    -- Verifica o tempo jogado na tabela 'biblioteca' (vinda do arquivo 04)
+    SELECT COALESCE(tempo_jogado_min, 0) INTO v_tempo_jogado 
+    FROM biblioteca 
+    WHERE id_usuario = p_id_vendedor AND id_jogo = v_id_jogo;
+
+    -- Se tiver mais de 20 horas de jogo (1200 min), a taxa cai pela metade
+    IF v_tempo_jogado >= 1200 THEN
+        v_taxa_percentual := 0.025;
+    END IF;
+
+    RETURN ROUND(p_preco_venda * v_taxa_percentual, 2);
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION fn_log_transacao_mercado()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_id_item_base INT;
+BEGIN
+    -- Captura o item base a partir do inventário do anúncio que está sendo removido
+    SELECT id_item_base INTO v_id_item_base
+    FROM inventario_usuario
+    WHERE id = OLD.id_inventario_item;
+
+    -- Registra o rastro na tabela de histórico
+    INSERT INTO mercado_historico (id, id_item_base, valor_venda, data_venda)
+    VALUES (
+        COALESCE((SELECT MAX(id) FROM mercado_historico), 0) + 1,
+        v_id_item_base,
+        OLD.preco_venda,
+        CURRENT_TIMESTAMP
+    );
+    
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE TRIGGER LogTransacaoMercado
+AFTER DELETE ON mercado_anuncio
+FOR EACH ROW
+EXECUTE FUNCTION fn_log_transacao_mercado();
+
+
+CREATE OR REPLACE PROCEDURE ListarItemMercado()
+LANGUAGE plpgsql AS $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN 
+        SELECT 
+            ma.id AS anuncio_id,
+            u.username AS vendedor,
+            ib.nome AS item_nome,
+            ib.raridade,
+            j.nome AS jogo_origem,
+            ma.preco_venda,
+            CalcularTaxaMercado(ma.preco_venda, ma.id_vendedor, ib.id) AS taxa_mercado
+        FROM mercado_anuncio ma
+        JOIN usuario u ON ma.id_vendedor = u.id
+        JOIN inventario_usuario iu ON ma.id_inventario_item = iu.id
+        JOIN item_base ib ON iu.id_item_base = ib.id
+        JOIN jogo j ON ib.id_jogo_origem = j.id
+    LOOP
+        RAISE NOTICE 'Anúncio: % | Vendedor: % | Item: % (%) | Jogo: % | Preço: R$ % | Taxa Estimada: R$ %',
+            r.anuncio_id, r.vendedor, r.item_nome, r.raridade, r.jogo_origem, r.preco_venda, r.taxa_mercado;
+    END LOOP;
+END;
+$$;
+
+
+CREATE OR REPLACE VIEW ItensMaisValorizados AS
+SELECT 
+    ib.id AS id_item,
+    ib.nome AS nome_item,
+    ib.raridade,
+    j.nome AS nome_jogo,
+    COUNT(mh.id) AS total_vendas,
+    ROUND(COALESCE(AVG(mh.valor_venda), 0.00), 2) AS preco_medio_venda,
+    ROUND(COALESCE(AVG(b.tempo_jogado_min) / 60.0, 0.00), 1) AS media_horas_jogadas_dos_donos
+FROM item_base ib
+JOIN jogo j ON ib.id_jogo_origem = j.id
+LEFT JOIN mercado_historico mh ON ib.id = mh.id_item_base
+LEFT JOIN biblioteca b ON j.id = b.id_jogo
+GROUP BY ib.id, ib.nome, ib.raridade, j.nome
+ORDER BY preco_medio_venda DESC, total_vendas DESC;
