@@ -1,4 +1,4 @@
--- 1) DROP TABLES
+
 
 DROP TABLE IF EXISTS insignia_usuario CASCADE;
 DROP TABLE IF EXISTS item_oferta_troca CASCADE;
@@ -12,7 +12,6 @@ DROP TABLE IF EXISTS jogo CASCADE;
 DROP TABLE IF EXISTS usuario CASCADE;
 
 
--- 2) DDL - CREATE TABLES
 CREATE TABLE usuario (
     id INT NOT NULL PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
@@ -94,10 +93,7 @@ CREATE TABLE insignia_usuario (
 );
 
 
--- 3) DML - INSERTS
 
-
--- USUARIOS
 INSERT INTO usuario (id, username, email) VALUES
 (1, 'ana.silva', 'ana.silva@email.com'), (2, 'bruno.melo', 'bruno.melo@email.com'),
 (3, 'carla.dias', 'carla.dias@email.com'), (4, 'diego.souza', 'diego.souza@email.com'),
@@ -115,12 +111,10 @@ INSERT INTO usuario (id, username, email) VALUES
 (27, 'arthur.moraes', 'arthur.moraes@email.com'), (28, 'beatriz.paz', 'beatriz.paz@email.com'),
 (29, 'caio.teixeira', 'caio.teixeira@email.com'), (30, 'dora.viana', 'dora.viana@email.com');
 
--- JOGOS
 INSERT INTO jogo (id, nome, desenvolvedora) VALUES
 (1, 'Elden Ring', 'FromSoftware'),
 (2, 'Cyberpunk 2077', 'CD Projekt Red');
 
--- ITEM BASE
 INSERT INTO item_base (id, nome, raridade, id_jogo_origem) VALUES
 (1, 'Rivers of Blood', 'Legendary', 1), (2, 'Moonveil Katana', 'Epic', 1), (3, 'Blasphemous Blade', 'Legendary', 1),
 (4, 'Malenia Armor Set', 'Legendary', 1), (5, 'Radagon Icon', 'Rare', 1), (6, 'Golden Seed', 'Uncommon', 1),
@@ -133,13 +127,11 @@ INSERT INTO item_base (id, nome, raridade, id_jogo_origem) VALUES
 (25, 'Satori Katana', 'Legendary', 2), (26, 'Lizzie Pistol', 'Rare', 2), (27, 'Widow Maker', 'Epic', 2),
 (28, 'Skippy AI Gun', 'Legendary', 2), (29, 'Netwatch Driver', 'Rare', 2), (30, 'Trauma Team Kit', 'Uncommon', 2);
 
--- INVENTARIO USUARIO
 INSERT INTO inventario_usuario (id, id_item_base, id_usuario_dono) VALUES
 (1,1,1), (2,16,2), (3,2,3), (4,17,4), (5,3,5), (6,18,6), (7,4,7), (8,19,8), (9,5,9), (10,20,10),
 (11,6,11), (12,21,12), (13,7,13), (14,22,14), (15,8,15), (16,23,16), (17,9,17), (18,24,18), (19,10,19), (20,25,20),
 (21,11,21), (22,26,22), (23,12,23), (24,27,24), (25,13,25), (26,28,26), (27,14,27), (28,29,28), (29,15,29), (30,30,30);
 
--- MERCADO ANUNCIO
 INSERT INTO mercado_anuncio (id, id_inventario_item, preco_venda, id_vendedor) VALUES
 (1,1,250.00,1), (2,2,180.00,2), (3,3,150.00,3), (4,4,500.00,4), (5,5,120.00,5), (6,6,300.00,6),
 (7,7,450.00,7), (8,8,600.00,8), (9,9,50.00,9), (10,10,400.00,10), (11,11,15.00,11), (12,12,25.00,12),
@@ -147,13 +139,103 @@ INSERT INTO mercado_anuncio (id, id_inventario_item, preco_venda, id_vendedor) V
 (19,19,450.00,19), (20,20,550.00,20), (21,21,12.00,21), (22,22,18.00,22), (23,23,200.00,23), (24,24,220.00,24),
 (25,25,600.00,25), (26,26,45.00,26), (27,27,85.00,27), (28,28,999.00,28), (29,29,35.00,29), (30,30,10.00,30);
 
--- INSIGNIA
 INSERT INTO insignia (id, nome, xp_recompensa, id_jogo) VALUES
 (1, 'Elden Lord', 1000, 1), (2, 'Shards Bearer', 500, 1),
 (3, 'Night City Legend', 1000, 2), (4, 'Cyberpsycho Hunter', 450, 2);
 
--- INSIGNIA USUARIO
 INSERT INTO insignia_usuario (id_usuario, id_insignia, nivel) VALUES
 (1,1,5), (2,3,1), (3,1,2), (4,3,2), (5,1,1), (6,4,3), (7,2,5), (8,3,4), (9,2,2), (10,4,5),
 (11,1,1), (12,3,1), (13,1,2), (14,4,2), (15,2,1), (16,3,3), (17,1,4), (18,4,5), (19,2,3), (20,3,1),
 (21,1,1), (22,4,2), (23,2,1), (24,3,2), (25,1,3), (26,4,4), (27,2,5), (28,3,1), (29,1,2), (30,4,3);
+
+CREATE OR REPLACE FUNCTION VerificarRaridadeItem(p_id_item_base INT)
+RETURNS VARCHAR(50) AS $$
+DECLARE
+    v_raridade VARCHAR(50);
+BEGIN
+    SELECT raridade INTO v_raridade
+    FROM item_base
+    WHERE id = p_id_item_base;
+    
+    RETURN COALESCE(v_raridade, 'Desconhecida');
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CalcularTaxaMercado(p_preco_venda DECIMAL(10, 2))
+RETURNS DECIMAL(10, 2) AS $$
+DECLARE
+    v_taxa_percentual DECIMAL(4, 2) := 0.05;
+BEGIN
+    RETURN ROUND(p_preco_venda * v_taxa_percentual, 2);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fn_log_transacao_mercado()
+RETURNS TRIGGER AS $$
+DECLARE
+    v_id_item_base INT;
+BEGIN
+    SELECT id_item_base INTO v_id_item_base
+    FROM inventario_usuario
+    WHERE id = OLD.id_inventario_item;
+
+    INSERT INTO mercado_historico (id, id_item_base, valor_venda, data_venda)
+    VALUES (
+        COALESCE((SELECT MAX(id) FROM mercado_historico), 0) + 1,
+        v_id_item_base,
+        OLD.preco_venda,
+        CURRENT_TIMESTAMP
+    );
+    
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE TRIGGER LogTransacaoMercado
+AFTER DELETE ON mercado_anuncio
+FOR EACH ROW
+EXECUTE FUNCTION fn_log_transacao_mercado();
+
+
+
+CREATE OR REPLACE PROCEDURE ListarItemMercado()
+LANGUAGE plpgsql AS $$
+DECLARE
+    r RECORD;
+BEGIN
+    FOR r IN 
+        SELECT 
+            ma.id AS anuncio_id,
+            u.username AS vendedor,
+            ib.nome AS item_nome,
+            ib.raridade,
+            j.nome AS jogo_origem,
+            ma.preco_venda,
+            CalcularTaxaMercado(ma.preco_venda) AS taxa_mercado
+        FROM mercado_anuncio ma
+        JOIN usuario u ON ma.id_vendedor = u.id
+        JOIN inventario_usuario iu ON ma.id_inventario_item = iu.id
+        JOIN item_base ib ON iu.id_item_base = ib.id
+        JOIN jogo j ON ib.id_jogo_origem = j.id
+    LOOP
+        RAISE NOTICE 'Anúncio: % | Vendedor: % | Item: % (%) | Jogo: % | Preço: R$ % | Taxa: R$ %',
+            r.anuncio_id, r.vendedor, r.item_nome, r.raridade, r.jogo_origem, r.preco_venda, r.taxa_mercado;
+    END LOOP;
+END;
+$$;
+
+
+CREATE OR REPLACE VIEW ItensMaisValorizados AS
+SELECT 
+    ib.id AS id_item,
+    ib.nome AS nome_item,
+    ib.raridade,
+    j.nome AS nome_jogo,
+    COUNT(mh.id) AS total_vendas,
+    ROUND(AVG(mh.valor_venda), 2) AS preco_medio_venda
+FROM item_base ib
+JOIN jogo j ON ib.id_jogo_origem = j.id
+LEFT JOIN mercado_historico mh ON ib.id = mh.id_item_base
+GROUP BY ib.id, ib.nome, ib.raridade, j.nome
+ORDER BY preco_medio_venda DESC;
