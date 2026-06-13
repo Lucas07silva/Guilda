@@ -136,7 +136,7 @@ CREATE OR REPLACE VIEW biblioteca_usuario AS
 SELECT 
     b.id_usuario,
     b.id_jogo,
-    ROUND(b.tempo_jogado_min / 60.0, 1) AS horas_jogadas,
+    ROUND(b.tempo_jogado_min / 60.0, 1) AS hora_jogada,
     b.data_aquisicao,
 
     (
