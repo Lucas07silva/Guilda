@@ -1,22 +1,3 @@
--- 4. biblioteca-progresso
-CREATE OR REPLACE FUNCTION calcular_playtime_total(p_id_usuario INT)
-RETURNS NUMERIC AS $$
-DECLARE
-    v_playtime_horas NUMERIC;
-BEGIN
-    SELECT SUM(tempo_jogado_min) / 60.0 INTO v_playtime_horas
-    FROM biblioteca
-    WHERE id_usuario = p_id_usuario;
-
-    IF v_playtime_horas IS NULL THEN
-        v_playtime_horas := 0.0;
-    END IF;
-
-    RETURN ROUND(v_playtime_horas, 1);
-END;
-$$ LANGUAGE plpgsql;
-
-
 -- 5.inventario_mercado
 CREATE OR REPLACE FUNCTION VerificarRaridadeItem(p_id_item_base INT)
 RETURNS VARCHAR(50) AS $$
