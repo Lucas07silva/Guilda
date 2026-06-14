@@ -1,25 +1,3 @@
--- 4. biblioteca-progresso
-CREATE OR REPLACE PROCEDURE atualizar_save_nuvem(
-    p_id_usuario INT, 
-    p_id_jogo INT, 
-    p_link_arquivo VARCHAR
-)
-AS $$
-BEGIN
-    INSERT INTO save_jogo (id, id_usuario, id_jogo, link_arquivo, data_sync)
-    VALUES (
-        (SELECT COALESCE(MAX(id), 0) + 1 FROM save_jogo), 
-        p_id_usuario, 
-        p_id_jogo, 
-        p_link_arquivo, 
-        NOW()
-    )
-    ON CONFLICT (id_usuario, id_jogo)
-    DO UPDATE SET link_arquivo = EXCLUDED.link_arquivo, data_sync = NOW();
-END;
-$$ LANGUAGE plpgsql;
-
-
 -- 5.inventario_mercado
 CREATE OR REPLACE PROCEDURE ListarItemMercado()
 LANGUAGE plpgsql AS $$
