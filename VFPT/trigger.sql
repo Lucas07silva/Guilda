@@ -1,4 +1,3 @@
-
 -- 5.inventario_mercado
 
 CREATE OR REPLACE FUNCTION fn_log_transacao_mercado()
