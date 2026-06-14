@@ -1,5 +1,4 @@
--- 1) DROP TABLES
-
+--DROP TABLES
 DROP TABLE IF EXISTS insignia_usuario CASCADE;
 DROP TABLE IF EXISTS item_oferta_troca CASCADE;
 DROP TABLE IF EXISTS oferta_troca CASCADE;
@@ -8,24 +7,8 @@ DROP TABLE IF EXISTS mercado_anuncio CASCADE;
 DROP TABLE IF EXISTS inventario_usuario CASCADE;
 DROP TABLE IF EXISTS insignia CASCADE;
 DROP TABLE IF EXISTS item_base CASCADE;
-DROP TABLE IF EXISTS jogo CASCADE;
-DROP TABLE IF EXISTS usuario CASCADE;
 
-
--- 2) DDL - CREATE TABLES
-CREATE TABLE usuario (
-    id INT NOT NULL PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE jogo (
-    id INT NOT NULL PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    desenvolvedora VARCHAR(255)
-);
-
+-- DDL
 CREATE TABLE item_base (
     id INT NOT NULL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
@@ -94,92 +77,39 @@ CREATE TABLE insignia_usuario (
 );
 
 
--- 3) DML - INSERTS
+-- DML
 
-
--- USUARIOS
-INSERT INTO usuario (id, username, email) VALUES
-(1, 'ana.silva', 'ana.silva@email.com'), (2, 'bruno.melo', 'bruno.melo@email.com'),
-(3, 'carla.dias', 'carla.dias@email.com'), (4, 'diego.souza', 'diego.souza@email.com'),
-(5, 'elena.martins', 'elena.martins@email.com'), (6, 'fabio.lima', 'fabio.lima@email.com'),
-(7, 'gabriel.vaz', 'gabriel.vaz@email.com'), (8, 'helena.rocha', 'helena.rocha@email.com'),
-(9, 'igor.nunes', 'igor.nunes@email.com'), (10, 'julia.ferreira', 'julia.ferreira@email.com'),
-(11, 'kevin.santos', 'kevin.santos@email.com'), (12, 'lara.gomes', 'lara.gomes@email.com'),
-(13, 'marcos.oliveira', 'marcos.oliveira@email.com'), (14, 'nina.castro', 'nina.castro@email.com'),
-(15, 'otavio.pinto', 'otavio.pinto@email.com'), (16, 'paula.leite', 'paula.leite@email.com'),
-(17, 'quel.ribeiro', 'quel.ribeiro@email.com'), (18, 'rafael.costa', 'rafael.costa@email.com'),
-(19, 'sofia.alves', 'sofia.alves@email.com'), (20, 'tiago.mendes', 'tiago.mendes@email.com'),
-(21, 'ursula.bezerra', 'ursula.bezerra@email.com'), (22, 'vitor.pereira', 'vitor.pereira@email.com'),
-(23, 'wagner.silva', 'wagner.silva@email.com'), (24, 'xenia.luz', 'xenia.luz@email.com'),
-(25, 'yago.frota', 'yago.frota@email.com'), (26, 'zilda.reis', 'zilda.reis@email.com'),
-(27, 'arthur.moraes', 'arthur.moraes@email.com'), (28, 'beatriz.paz', 'beatriz.paz@email.com'),
-(29, 'caio.teixeira', 'caio.teixeira@email.com'), (30, 'dora.viana', 'dora.viana@email.com');
-
--- JOGOS
-INSERT INTO jogo (id, nome, desenvolvedora) VALUES
-(1, 'God of War', 'Santa Monica Studio'),
-(2, 'Halo Infinite', '343 Industries'),
-(3, 'Zelda BOTW', 'Nintendo'),
-(4, 'FIFA 24', 'EA Sports'),
-(5, 'Far Cry 6', 'Ubisoft'),
-(6, 'GTA V', 'Rockstar Games'),
-(7, 'Diablo IV', 'Blizzard Entertainment'),
-(8, 'Final Fantasy XVI', 'Square Enix'),
-(9, 'Resident Evil 4', 'Capcom'),
-(10, 'Elden Ring', 'FromSoftware'),
-(11, 'Sonic Frontiers', 'Sega'),
-(12, 'Hogwarts Legacy', 'Avalanche Software'),
-(13, 'Starfield', 'Bethesda Game Studios'),
-(14, 'Stellaris', 'Paradox Interactive'),
-(15, 'Cyberpunk 2077', 'CD Projekt Red'),
-(16, 'Metal Gear Rising', 'PlatinumGames'),
-(17, 'Portal 2', 'Valve'),
-(18, 'Fortnite', 'Epic Games'),
-(19, 'Dark Souls III', 'FromSoftware'),
-(20, 'A Plague Tale', 'Asobo Studio'),
-(21, 'Cult of the Lamb', 'Massive Monster'),
-(22, 'Overcooked 2', 'Team17'),
-(23, 'Dredge', 'Black Salt Games'),
-(24, 'Stray', 'BlueTwelve Studio'),
-(25, 'Satisfactory', 'Coffee Stain Studios'),
-(26, 'Metro Exodus', '4A Games'),
-(27, 'Control', 'Remedy Entertainment'),
-(28, 'Vampyr', 'Dontnod Entertainment'),
-(29, 'Dying Light 2', 'Techland'),
-(30, 'Sniper Elite 5', 'Rebellion Developments');
-
--- ITEM BASE
 INSERT INTO item_base (id, nome, raridade, id_jogo_origem) VALUES
-(1, 'Lâminas do Caos', 'Lendário', 1),          -- God of War
-(2, 'Rifle de Assalto MA40', 'Comum', 2),      -- Halo Infinite
-(3, 'Master Sword', 'Épico', 3),               -- Zelda BOTW
-(4, 'Cartão de Jogador Ouro', 'Raro', 4),       -- FIFA 24
-(5, 'Machete de Guerrilha', 'Comum', 5),       -- Far Cry 6
-(6, 'Bastão de Beisebol', 'Comum', 6),          -- GTA V
-(7, 'Elmo de Shako', 'Lendário', 7),           -- Diablo IV
-(8, 'Invencível (Espada)', 'Épico', 8),        -- Final Fantasy XVI
-(9, 'Erva Verde', 'Comum', 9),                 -- Resident Evil 4
-(10, 'Lágrima Larvar', 'Raro', 10),            -- Elden Ring
-(11, 'Esmeralda do Caos', 'Lendário', 11),     -- Sonic Frontiers
-(12, 'Varinha de Videira', 'Raro', 12),        -- Hogwarts Legacy
-(13, 'Fragmento de Artefato', 'Épico', 13),    -- Starfield
-(14, 'Matéria Escura', 'Raro', 14),            -- Stellaris
-(15, 'Lâminas Mantis', 'Épico', 15),           -- Cyberpunk 2077
-(16, 'Espada de Alta Frequência', 'Épico', 16),-- Metal Gear Rising
-(17, 'Gerador de Portais', 'Lendário', 17),    -- Portal 2
-(18, 'Poção de Escudo', 'Comum', 18),          -- Fortnite
-(19, 'Alma de Cinzas', 'Lendário', 19),        -- Dark Souls III
-(20, 'Estilingue de Amicia', 'Comum', 20),     -- A Plague Tale
-(21, 'Velo de Ouro', 'Épico', 21),             -- Cult of the Lamb
-(22, 'Extintor de Incêndio', 'Comum', 22),     -- Overcooked 2
-(23, 'Relíquia Abissal', 'Raro', 23),          -- Dredge
-(24, 'Mochila de Drone', 'Comum', 24),         -- Stray
-(25, 'Célula de Energia', 'Raro', 25),         -- Satisfactory
-(26, 'Máscara de Gás', 'Comum', 26),           -- Metro Exodus
-(27, 'Objeto de Poder', 'Épico', 27),          -- Control
-(28, 'Soro Vampírico', 'Raro', 28),            -- Vampyr
-(29, 'Gancho de Escalada', 'Raro', 29),        -- Dying Light 2
-(30, 'Munição Perfurante', 'Comum', 30);       -- Sniper Elite 5
+(1, 'Lâminas do Caos', 'Lendário', 1),
+(2, 'Rifle de Assalto MA40', 'Comum', 2),
+(3, 'Master Sword', 'Épico', 3),
+(4, 'Cartão de Jogador Ouro', 'Raro', 4),
+(5, 'Machete de Guerrilha', 'Comum', 5),
+(6, 'Bastão de Beisebol', 'Comum', 6),
+(7, 'Elmo de Shako', 'Lendário', 7),
+(8, 'Invencível (Espada)', 'Épico', 8),
+(9, 'Erva Verde', 'Comum', 9),
+(10, 'Lágrima Larvar', 'Raro', 10),
+(11, 'Esmeralda do Caos', 'Lendário', 11),
+(12, 'Varinha de Videira', 'Raro', 12),
+(13, 'Fragmento de Artefato', 'Épico', 13),
+(14, 'Matéria Escura', 'Raro', 14),
+(15, 'Lâminas Mantis', 'Épico', 15),
+(16, 'Espada de Alta Frequência', 'Épico', 16),
+(17, 'Gerador de Portais', 'Lendário', 17),
+(18, 'Poção de Escudo', 'Comum', 18),
+(19, 'Alma de Cinzas', 'Lendário', 19),
+(20, 'Estilingue de Amicia', 'Comum', 20),
+(21, 'Velo de Ouro', 'Épico', 21),
+(22, 'Extintor de Incêndio', 'Comum', 22),
+(23, 'Relíquia Abissal', 'Raro', 23),
+(24, 'Mochila de Drone', 'Comum', 24),
+(25, 'Célula de Energia', 'Raro', 25),
+(26, 'Máscara de Gás', 'Comum', 26),
+(27, 'Objeto de Poder', 'Épico', 27),
+(28, 'Soro Vampírico', 'Raro', 28),
+(29, 'Gancho de Escalada', 'Raro', 29),
+(30, 'Munição Perfurante', 'Comum', 30);
 
 -- INVENTARIO USUARIO
 INSERT INTO inventario_usuario (id, id_item_base, id_usuario_dono) VALUES
@@ -197,152 +127,24 @@ INSERT INTO mercado_anuncio (id, id_inventario_item, preco_venda, id_vendedor) V
 
 -- INSIGNIA
 INSERT INTO insignia (id, nome, xp_recompensa, id_jogo) VALUES
-(1, 'Matador de Deuses', 500, 1),           -- God of War
-(2, 'Spartan Lendário', 450, 2),           -- Halo Infinite
-(3, 'Herói de Hyrule', 600, 3),            -- Zelda BOTW
-(4, 'Artilheiro de Ouro', 300, 4),         -- FIFA 24
-(5, 'Libertador de Yara', 350, 5),         -- Far Cry 6
-(6, 'Magnata do Crime', 400, 6),           -- GTA V
-(7, 'Andarilho do Inferno', 550, 7),       -- Diablo IV
-(8, 'Portador do Cristal', 500, 8),        -- Final Fantasy XVI
-(9, 'Mestre do Survival', 450, 9),         -- Resident Evil 4
-(10, 'Lorde Prístino', 700, 10),           -- Elden Ring
-(11, 'Velocidade Supersônica', 300, 11),   -- Sonic Frontiers
-(12, 'Bruxo de Hogwarts', 400, 12),        -- Hogwarts Legacy
-(13, 'Explorador das Estrelas', 500, 13),  -- Starfield
-(14, 'Imperador Galáctico', 350, 14),      -- Stellaris
-(15, 'Lenda de Night City', 450, 15),      -- Cyberpunk 2077
-(16, 'Ciborgue de Elite', 300, 16),        -- Metal Gear Rising
-(17, 'Mestre dos Portais', 250, 17),       -- Portal 2
-(18, 'Mestre do Drop', 200, 18),           -- Fortnite
-(19, 'Alma das Cinzas', 600, 19),          -- Dark Souls III
-(20, 'Sobrevivente da Peste', 350, 20),    -- A Plague Tale
-(21, 'Líder do Culto', 300, 21),           -- Cult of the Lamb
-(22, 'Chef de Estrela Michelin', 200, 22), -- Overcooked 2
-(23, 'Pescador do Abismo', 250, 23),       -- Dredge
-(24, 'Miau-ventureiro', 250, 24),          -- Stray
-(25, 'Eficiência Industrial', 300, 25),    -- Satisfactory
-(26, 'Rastreador do Metro', 350, 26),      -- Metro Exodus
-(27, 'Diretor do FBC', 350, 27),           -- Control
-(28, 'Doutor das Sombras', 300, 28),       -- Vampyr
-(29, 'Mestre do Parkour', 400, 29),        -- Dying Light 2
-(30, 'Atirador de Elite', 350, 30);        -- Sniper Elite 5
+(1, 'Matador de Deuses', 500, 1), (2, 'Spartan Lendário', 450, 2),
+(3, 'Herói de Hyrule', 600, 3), (4, 'Artilheiro de Ouro', 300, 4),
+(5, 'Libertador de Yara', 350, 5), (6, 'Magnata do Crime', 400, 6),
+(7, 'Andarilho do Inferno', 550, 7), (8, 'Portador do Cristal', 500, 8),
+(9, 'Mestre do Survival', 450, 9), (10, 'Lorde Prístino', 700, 10),
+(11, 'Velocidade Supersônica', 300, 11), (12, 'Bruxo de Hogwarts', 400, 12),
+(13, 'Explorador das Estrelas', 500, 13), (14, 'Imperador Galáctico', 350, 14),
+(15, 'Lenda de Night City', 450, 15), (16, 'Ciborgue de Elite', 300, 16),
+(17, 'Mestre dos Portais', 250, 17), (18, 'Mestre do Drop', 200, 18),
+(19, 'Alma das Cinzas', 600, 19), (20, 'Sobrevivente da Peste', 350, 20),
+(21, 'Líder do Culto', 300, 21), (22, 'Chef de Estrela Michelin', 200, 22),
+(23, 'Pescador do Abismo', 250, 23), (24, 'Miau-ventureiro', 250, 24),
+(25, 'Eficiência Industrial', 300, 25), (26, 'Rastreador do Metro', 350, 26),
+(27, 'Diretor do FBC', 350, 27), (28, 'Doutor das Sombras', 300, 28),
+(29, 'Mestre do Parkour', 400, 29), (30, 'Atirador de Elite', 350, 30);
 
 -- INSIGNIA USUARIO
 INSERT INTO insignia_usuario (id_usuario, id_insignia, nivel) VALUES
 (1,1,5), (2,3,1), (3,1,2), (4,3,2), (5,1,1), (6,4,3), (7,2,5), (8,3,4), (9,2,2), (10,4,5),
 (11,1,1), (12,3,1), (13,1,2), (14,4,2), (15,2,1), (16,3,3), (17,1,4), (18,4,5), (19,2,3), (20,3,1),
 (21,1,1), (22,4,2), (23,2,1), (24,3,2), (25,1,3), (26,4,4), (27,2,5), (28,3,1), (29,1,2), (30,4,3);
-
-
-CREATE OR REPLACE FUNCTION VerificarRaridadeItem(p_id_item_base INT)
-RETURNS VARCHAR(50) AS $$
-DECLARE
-    v_raridade VARCHAR(50);
-BEGIN
-    SELECT COALESCE(raridade, 'Common') INTO v_raridade
-    FROM item_base
-    WHERE id = p_id_item_base;
-    
-    RETURN v_raridade;
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION CalcularTaxaMercado(p_preco_venda DECIMAL(10, 2), p_id_vendedor INT, p_id_item_base INT)
-RETURNS DECIMAL(10, 2) AS $$
-DECLARE
-    v_taxa_percentual DECIMAL(4, 3) := 0.050; -- Taxa padrão de 5%
-    v_tempo_jogado INT;
-    v_id_jogo INT;
-BEGIN
-    -- Identifica o jogo de origem do item
-    SELECT id_jogo_origem INTO v_id_jogo FROM item_base WHERE id = p_id_item_base;
-
-    -- Verifica o tempo jogado na tabela 'biblioteca' (vinda do arquivo 04)
-    SELECT COALESCE(tempo_jogado_min, 0) INTO v_tempo_jogado 
-    FROM biblioteca 
-    WHERE id_usuario = p_id_vendedor AND id_jogo = v_id_jogo;
-
-    -- Se tiver mais de 20 horas de jogo (1200 min), a taxa cai pela metade
-    IF v_tempo_jogado >= 1200 THEN
-        v_taxa_percentual := 0.025;
-    END IF;
-
-    RETURN ROUND(p_preco_venda * v_taxa_percentual, 2);
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION fn_log_transacao_mercado()
-RETURNS TRIGGER AS $$
-DECLARE
-    v_id_item_base INT;
-BEGIN
-    -- Captura o item base a partir do inventário do anúncio que está sendo removido
-    SELECT id_item_base INTO v_id_item_base
-    FROM inventario_usuario
-    WHERE id = OLD.id_inventario_item;
-
-    -- Registra o rastro na tabela de histórico
-    INSERT INTO mercado_historico (id, id_item_base, valor_venda, data_venda)
-    VALUES (
-        COALESCE((SELECT MAX(id) FROM mercado_historico), 0) + 1,
-        v_id_item_base,
-        OLD.preco_venda,
-        CURRENT_TIMESTAMP
-    );
-    
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE TRIGGER LogTransacaoMercado
-AFTER DELETE ON mercado_anuncio
-FOR EACH ROW
-EXECUTE FUNCTION fn_log_transacao_mercado();
-
-
-CREATE OR REPLACE PROCEDURE ListarItemMercado()
-LANGUAGE plpgsql AS $$
-DECLARE
-    r RECORD;
-BEGIN
-    FOR r IN 
-        SELECT 
-            ma.id AS anuncio_id,
-            u.username AS vendedor,
-            ib.nome AS item_nome,
-            ib.raridade,
-            j.nome AS jogo_origem,
-            ma.preco_venda,
-            CalcularTaxaMercado(ma.preco_venda, ma.id_vendedor, ib.id) AS taxa_mercado
-        FROM mercado_anuncio ma
-        JOIN usuario u ON ma.id_vendedor = u.id
-        JOIN inventario_usuario iu ON ma.id_inventario_item = iu.id
-        JOIN item_base ib ON iu.id_item_base = ib.id
-        JOIN jogo j ON ib.id_jogo_origem = j.id
-    LOOP
-        RAISE NOTICE 'Anúncio: % | Vendedor: % | Item: % (%) | Jogo: % | Preço: R$ % | Taxa Estimada: R$ %',
-            r.anuncio_id, r.vendedor, r.item_nome, r.raridade, r.jogo_origem, r.preco_venda, r.taxa_mercado;
-    END LOOP;
-END;
-$$;
-
-
-CREATE OR REPLACE VIEW ItensMaisValorizados AS
-SELECT 
-    ib.id AS id_item,
-    ib.nome AS nome_item,
-    ib.raridade,
-    j.nome AS nome_jogo,
-    COUNT(mh.id) AS total_vendas,
-    ROUND(COALESCE(AVG(mh.valor_venda), 0.00), 2) AS preco_medio_venda,
-    ROUND(COALESCE(AVG(b.tempo_jogado_min) / 60.0, 0.00), 1) AS media_horas_jogadas_dos_donos
-FROM item_base ib
-JOIN jogo j ON ib.id_jogo_origem = j.id
-LEFT JOIN mercado_historico mh ON ib.id = mh.id_item_base
-LEFT JOIN biblioteca b ON j.id = b.id_jogo
-GROUP BY ib.id, ib.nome, ib.raridade, j.nome
-ORDER BY preco_medio_venda DESC, total_vendas DESC;
