@@ -167,3 +167,66 @@ INSERT INTO reembolso (id, id_transacao, motivo_reembolso, status_aprovacao) VAL
 (29, 29, 'Salves corrompidos frequentemente', 'Aprovado'), 
 (30, 30, 'Jogo não atendeu as minhas expectativas', 'Aprovado');
 
+CREATE OR REPLACE PROCEDURE ComprarJogo(
+    p_id_usuario INT,
+    p_id_jogo INT,
+    p_id_metodo INT,
+    p_codigo_cupom VARCHAR(20) DEFAULT NULL
+)
+AS $$
+DECLARE
+    v_preco_final DECIMAL(10,2);
+    v_desconto INT := 0;
+    v_novo_id_transacao INT;
+    v_novo_id_item INT;
+BEGIN
+    -- obter o preço base do jogo
+    SELECT preco_base INTO v_preco_final FROM jogo WHERE id = p_id_jogo;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Jogo com ID % não existe no catálogo.', p_id_jogo;
+    END IF;
+
+    -- validar e aplicar cupom de desconto (caso enviado)
+    IF p_codigo_cupom IS NOT NULL THEN
+        SELECT desconto_percentual INTO v_desconto
+        FROM cupom
+        WHERE codigo_cupom = p_codigo_cupom AND id_usuario_dono = p_id_usuario;
+        
+        IF FOUND THEN
+            v_preco_final := v_preco_final * (1 - (v_desconto / 100.0));
+        ELSE
+            RAISE NOTICE 'Cupom inválido ou não pertence a este usuário. O preço base será mantido.';
+        END IF;
+    END IF;
+
+    --  gerar IDs sequenciais para a transação e o item da transação
+    SELECT COALESCE(MAX(id), 0) + 1 INTO v_novo_id_transacao FROM transacao;
+    SELECT COALESCE(MAX(id), 0) + 1 INTO v_novo_id_item FROM item_transacao;
+
+    --  registrar a Transação principal 
+    INSERT INTO transacao (id, id_usuario, id_metodo, valor_total, status_transacao)
+    VALUES (v_novo_id_transacao, p_id_usuario, p_id_metodo, v_preco_final, 'Aprovada');
+
+    --  vincular o jogo comprado à transação realizada
+    INSERT INTO item_transacao (id, id_transacao, id_jogo, preco_vendido)
+    VALUES (v_novo_id_item, v_novo_id_transacao, p_id_jogo, v_preco_final);
+
+    --  debitar o valor do saldo da carteira do usuário
+    UPDATE usuario
+    SET saldo_carteira = saldo_carteira - v_preco_final
+    WHERE id = p_id_usuario;
+
+    --  remover da lista de desejos (se o jogo estiver adicionado lá)
+    DELETE FROM lista_desejo
+    WHERE id_usuario = p_id_usuario AND id_jogo = p_id_jogo;
+
+    RAISE NOTICE 'Compra realizada com sucesso! Transação ID: %, Valor Pago: R$ %', v_novo_id_transacao, v_preco_final;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        -- desfaz qualquer alteração caso ocorra saldo insuficiente na Trigger ou qualquer erro inesperado
+        RAISE EXCEPTION 'Falha na operação de compra: %', SQLERRM;
+END;
+$$ LANGUAGE plpgsql;
+
+
