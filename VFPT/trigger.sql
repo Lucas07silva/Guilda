@@ -83,3 +83,35 @@ AFTER DELETE
 ON mercado_anuncio
 FOR EACH ROW
 EXECUTE FUNCTION fn_log_transacao_mercado();
+
+
+-- parte 3
+
+
+CREATE OR REPLACE FUNCTION fn_atualizar_media_rating()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE jogo
+    SET media_avaliacao = (
+        SELECT ROUND(AVG(nota), 2)
+        FROM avaliacao
+        WHERE id_jogo = NEW.id_jogo
+    )
+    WHERE id = NEW.id_jogo;
+
+    RETURN NEW;
+
+END;
+$$;
+
+
+
+CREATE TRIGGER AtualizarMediaRating
+AFTER INSERT
+ON avaliacao
+FOR EACH ROW
+EXECUTE FUNCTION fn_atualizar_media_rating();
