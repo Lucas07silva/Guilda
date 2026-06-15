@@ -1,28 +1,35 @@
--- 5.inventario_mercado
-
-CREATE OR REPLACE FUNCTION fn_log_transacao_mercado()
-RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION fn_verificar_saldo_compra()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
 DECLARE
-    v_id_item_base INT;
+    v_saldo NUMERIC(10,2);
 BEGIN
-    SELECT id_item_base INTO v_id_item_base
-    FROM inventario_usuario
-    WHERE id = OLD.id_inventario_item;
 
-    INSERT INTO mercado_historico (id, id_item_base, valor_venda, data_venda)
-    VALUES (
-        COALESCE((SELECT MAX(id) FROM mercado_historico), 0) + 1,
-        v_id_item_base,
-        OLD.preco_venda,
-        CURRENT_TIMESTAMP
-    );
-    
-    RETURN OLD;
+    SELECT saldo
+    INTO v_saldo
+    FROM carteira_usuario
+    WHERE id_usuario = NEW.id_usuario;
+
+    IF v_saldo < NEW.valor_total THEN
+        RAISE EXCEPTION
+        'Saldo insuficiente. Saldo atual: %, Valor da compra: %',
+        v_saldo,
+        NEW.valor_total;
+    END IF;
+
+    RETURN NEW;
+
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
-DROP TRIGGER IF EXISTS LogTransacaoMercado ON mercado_anuncio;
-CREATE TRIGGER LogTransacaoMercado
-AFTER DELETE ON mercado_anuncio
+
+
+
+
+CREATE TRIGGER VerificarSaldoCompra
+BEFORE INSERT
+ON transacao
 FOR EACH ROW
-EXECUTE FUNCTION fn_log_transacao_mercado();
+EXECUTE FUNCTION fn_verificar_saldo_compra();
